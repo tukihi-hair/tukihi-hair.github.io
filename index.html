@@ -89,6 +89,11 @@
       <div class="err">郵便番号は、ハイフンなしの数字7けたで入力してください</div>
     </div>
 
+    <div class="card" data-field="visit" data-single="visit">
+      <p class="q">当店のご利用は初めてですか？<span class="req">必須</span></p>
+      <div class="chips"></div>
+      <div class="err">どちらかを選んでください</div>
+    </div>
     <div class="card" data-field="time" data-single="time">
       <p class="q">本日のお時間について<span class="req">必須</span></p>
       <div class="chips"></div>
@@ -118,6 +123,7 @@
       <div class="sub-field" id="allergyBox"><input type="text" name="allergyDetail" placeholder="例：カラー剤、金属"></div>
       <div class="err">どちらかを選んでください</div>
     </div>
+    <div id="firstOnly" style="display:none">
     <div class="card" data-field="lastCut" data-single="lastCut">
       <p class="q">前回のカットはいつですか？<span class="req">必須</span></p>
       <div class="chips"></div>
@@ -132,6 +138,7 @@
       <p class="q">前回の縮毛矯正・ストレートはいつですか？<span class="req">必須</span></p>
       <div class="chips"></div>
       <div class="err">ひとつ選んでください</div>
+    </div>
     </div>
 
     <div class="card" data-field="consent">
@@ -167,6 +174,7 @@
     lastStraight: { title: '前回の縮毛矯正・ストレートはいつですか？', options: ['1か月前', '2〜3か月前', '4〜5か月前', 'それより前・していない'] }
   };
   var OPT = {};
+  OPT.visit = ['初めて', '2回目以上'];
   function applyCfg(CFG) {
     Object.keys(DEFAULT_CFG).forEach(function (k) {
       var c = (CFG && CFG[k] && CFG[k].options && CFG[k].options.length) ? CFG[k] : DEFAULT_CFG[k];
@@ -193,6 +201,7 @@
           val[key] = label;
           Array.prototype.forEach.call(box.children, function (c) { c.className = 'chip' + (c.textContent === label ? ' on' : ''); });
           card.classList.remove('bad'); card.querySelector('.err') && card.querySelector('.err').classList.remove('show');
+          if (key === 'visit') document.getElementById('firstOnly').style.display = label === '初めて' ? '' : 'none';
           if (key === 'time') document.getElementById('endTimeBox').className = 'sub-field' + (label === '終わりたい時間がある' ? ' show' : '');
           if (key === 'styling') document.getElementById('stylingBox').className = 'sub-field' + (label === 'する' ? ' show' : '');
           if (key === 'allergy') document.getElementById('allergyBox').className = 'sub-field' + (label === 'ある' ? ' show' : '');
@@ -236,7 +245,9 @@
     if (mark('kana', !F['kana'].value.trim())) bad.push('kana');
     if (mark('phone', !/^0[0-9]{9,10}$/.test(phone))) bad.push('phone');
     if (mark('zip', zip !== '' && !/^[0-9]{7}$/.test(zip))) bad.push('zip');
-    ['time', 'style', 'lastCut', 'styling', 'allergy', 'lastColor', 'lastStraight'].forEach(function (k) { if (mark(k, !val[k])) bad.push(k); });
+    var need = ['visit', 'time', 'style', 'styling', 'allergy'];
+    if (val.visit === '初めて') need = need.concat(['lastCut', 'lastColor', 'lastStraight']);
+    need.forEach(function (k) { if (mark(k, !val[k])) bad.push(k); });
     if (mark('consent', !F['consent'].checked)) bad.push('consent');
     if (bad.length) {
       document.querySelector('[data-field="' + bad[0] + '"]').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -244,9 +255,9 @@
     }
     var data = {
       name: F['name'].value, kana: F['kana'].value, phone: phone, birth: F['birth'].value, zip: zip, address: F['address'].value,
-      time: val.time, endTime: F['endTime'].value, style: val.style, worries: val.worries, worriesOther: F['worriesOther'].value,
-      lastCut: val.lastCut, styling: val.styling, stylingDetail: F['stylingDetail'].value, allergy: val.allergy, allergyDetail: F['allergyDetail'].value,
-      lastColor: val.lastColor, lastStraight: val.lastStraight, consent: true
+      visit: val.visit, time: val.time, endTime: F['endTime'].value, style: val.style, worries: val.worries, worriesOther: F['worriesOther'].value,
+      lastCut: val.visit === '初めて' ? val.lastCut : '', styling: val.styling, stylingDetail: F['stylingDetail'].value, allergy: val.allergy, allergyDetail: F['allergyDetail'].value,
+      lastColor: val.visit === '初めて' ? val.lastColor : '', lastStraight: val.visit === '初めて' ? val.lastStraight : '', consent: true
     };
     var btn = document.getElementById('btn'); var se = document.getElementById('sendErr');
     btn.disabled = true; btn.textContent = '送信中…'; se.classList.remove('show');
