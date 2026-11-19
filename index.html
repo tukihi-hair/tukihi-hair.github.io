@@ -17,6 +17,7 @@
     font-size: 16px; line-height: 1.7; -webkit-text-size-adjust: 100%; }
   .wrap { max-width: 560px; margin: 0 auto; padding: 28px 18px 60px; }
   .logo { text-align: center; margin: 6px 0 4px; color: var(--sub); }
+  .logo img { height: 76px; width: auto; }
   .logo .slash { display: block; font-family: "Cormorant Garamond", serif; font-size: 40px; line-height: 1; font-weight: 400; }
   .logo .word { font-family: "Cormorant Garamond", serif; font-size: 22px; letter-spacing: .5em; padding-left: .5em; }
   h1 { font-family: "Shippori Mincho", serif; font-weight: 600; font-size: 22px; text-align: center; letter-spacing: .12em; margin: 14px 0 6px; }
@@ -53,7 +54,7 @@
 </head>
 <body>
 <div class="wrap" id="app">
-  <div class="logo"><span class="slash">/</span><span class="word">tukihi</span></div>
+  <div class="logo"><img src="logo.png" alt="/tukihi"></div>
   <h1>カウンセリングシート</h1>
   <p class="lead">ご来店ありがとうございます。<br>髪のお悩みやご希望をお聞かせください。<br>（1〜2分で終わります）</p>
 
@@ -266,7 +267,7 @@
       .then(function (res) {
         if (!res || !res.ok) throw new Error(res && res.error ? res.error : '');
         document.getElementById('app').innerHTML =
-          '<div class="logo"><span class="slash">/</span><span class="word">tukihi</span></div>' +
+          '<div class="logo"><img src="logo.png" alt="/tukihi"></div>' +
           '<div class="thanks"><h2>ありがとうございました</h2><p>ご入力いただきありがとうございます😊<br>スタッフがお席でお声がけいたします。</p></div>';
         window.scrollTo(0, 0);
       })
